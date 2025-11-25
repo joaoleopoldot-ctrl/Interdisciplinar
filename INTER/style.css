@@ -240,3 +240,52 @@ input[type="checkbox"]:checked::after {
     .layout { grid-template-columns: 1fr; } .sidebar { display: none; }
     .dashboard-summary, .dashboard-grid { grid-template-columns: 1fr; }
 }
+/* --- Estilos para o novo Modal de Login/Registro --- */
+
+/* Novo Botão Grande e Verde para Cadastro */
+.btn-success-large {
+    padding: 14px 28px; border-radius: 12px; font-weight: 700; border: none;
+    background: var(--accent-2); /* Usa a cor verde definida */
+    color: #fff;
+    box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4); 
+    transition: 0.3s;
+    width: 100%; /* Força largura total */
+}
+.btn-success-large:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(40, 167, 69, 0.6); }
+
+/* Estilo para a mensagem "Mínimo 6 caracteres" */
+.pass-info {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    display: block;
+    margin-top: -15px; /* Alinha com o campo de senha */
+    margin-bottom: 5px;
+}
+
+/* Link de Alternância */
+.link-accent {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+}
+.link-accent:hover {
+    text-decoration: underline;
+}
+
+/* --- Configuração do Toast (Correção do JS para usar classes) --- */
+.toast {
+    background: var(--card); /* Fundo branco do cartão */
+    color: var(--text); /* Texto escuro */
+    padding: 12px 18px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-elevated);
+    border-left: 4px solid var(--accent); /* Padrão azul (usado como erro ou neutro) */
+    font-weight: 500;
+}
+.toast-success {
+    border-left-color: var(--accent-2); /* Verde para sucesso */
+}
+.toast-error {
+    border-left-color: var(--danger); /* Vermelho para erro */
+}
