@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyFlow Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    
+    <div id="toast-container"></div>
+
+    <div class="layout">
+        <div class="sidebar">
+            <div class="logo-title">
+                <span class="logo-icon"><i class="ph-fill ph-student"></i></span>
+                <span><span class="logo-study">Study</span><span class="logo-flow">Flow</span></span>
+            </div>
+            <ul class="sidebar-list">
+                <li onclick="showSection('dashboard')" class="selected"><i class="ph ph-squares-four" style="margin-right:10px"></i> Painel Principal</li>
+                <li onclick="showSection('disciplinas')"><i class="ph ph-books" style="margin-right:10px"></i> Disciplinas</li>
+                <li onclick="showSection('tarefas')"><i class="ph ph-check-square-offset" style="margin-right:10px"></i> Tarefas</li>
+            </ul>
+        </div>
+
+        <div class="main">
+            <div class="main-container">
+                
+                <div class="greeting-box animate-up">
+                    <span class="greeting-date" id="current-date">Carregando...</span>
+                    <h1 class="greeting-title"><span id="greeting-text">Olá</span>, <span class="greeting-name">Estudante</span></h1>
+                </div>
+                
+                <div id="disciplinas-section">
+                    <div class="dashboard-summary animate-up animate-delay-1">
+                        <div class="summary-card">
+                            <div class="summary-icon-box icon-blue"><i class="ph ph-books"></i></div>
+                            <div class="summary-info">
+                                <h4>Disciplinas</h4>
+                                <span class="number" id="total-disc">0</span>
+                            </div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-icon-box icon-purple"><i class="ph ph-list-checks"></i></div>
+                            <div class="summary-info">
+                                <h4>Tarefas Ativas</h4>
+                                <span class="number" id="total-tasks">0</span>
+                            </div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="summary-icon-box icon-green"><i class="ph ph-check-fat"></i></div>
+                            <div class="summary-info">
+                                <h4>Concluídas</h4>
+                                <span class="number" id="total-done">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="header">
+                        <h2 class="section-title">Visão Geral das Disciplinas</h2>
+                        <button class="btn-primary" onclick="openModal('modal-disciplina')">+ Nova Disciplina</button>
+                    </div>
+                    <div class="dashboard-grid" id="disciplinas-grid"></div>
+                </div>
+
+                <div id="tarefas-section" style="display:none;">
+                    <div class="header">
+                        <h2 class="section-title">Sua Lista de Tarefas</h2>
+                        <button class="btn-primary" onclick="openModal('modal-tarefa')">+ Nova Tarefa</button>
+                    </div>
+                    <div class="card fullwidth">
+                        <ul class="list-group" id="tarefas-list"></ul>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-disciplina" class="overlay" style="display:none;">
+        <div class="login-card">
+            <h3 class="login-title">Criar Nova Disciplina</h3>
+            <form id="form-disciplina" class="form">
+                <div class="form-group">
+                    <label class="label">Nome da Matéria</label>
+                    <input type="text" class="input" id="disc-nome" required placeholder="Ex: Cálculo Numérico">
+                </div>
+                <div class="form-group">
+                    <label class="label">Descrição Curta</label>
+                    <textarea class="input" id="disc-desc" rows="3" placeholder="Ex: Foco em integrais..."></textarea>
+                </div>
+                <div class="modal-actions" style="display:flex; justify-content:flex-end; gap:10px; margin-top:30px;">
+                    <button type="button" class="btn-outline" onclick="closeModal('modal-disciplina')">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-tarefa" class="overlay" style="display:none;">
+        <div class="login-card">
+            <h3 class="login-title">Adicionar Nova Tarefa</h3>
+            <form id="form-tarefa" class="form">
+                <div class="form-group">
+                    <label class="label">O que precisa ser feito?</label>
+                    <input type="text" class="input" id="task-desc" required placeholder="Ex: Resolver lista 5">
+                </div>
+                <div class="form-group">
+                    <label class="label">Disciplina Relacionada</label>
+                    <select class="input" id="task-disc-select" required></select>
+                </div>
+                <div class="row-2" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label class="label">Prioridade</label>
+                        <select class="input" id="task-prio">
+                            <option value="Baixa">Baixa</option>
+                            <option value="Média" selected>Média</option>
+                            <option value="Alta">Alta</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="label">Prazo de Entrega</label>
+                        <input type="date" class="input" id="task-date">
+                    </div>
+                </div>
+                <div class="modal-actions" style="display:flex; justify-content:flex-end; gap:10px; margin-top:30px;">
+                    <button type="button" class="btn-outline" onclick="closeModal('modal-tarefa')">Cancelar</button>
+                    <button type="submit" class="btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8080/api';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            updateGreeting();
+            loadDisciplinas();
+            loadTarefas();
+        });
+
+        // Navegação
+        function showSection(sectionName) {
+            document.getElementById('disciplinas-section').style.display = 'none';
+            document.getElementById('tarefas-section').style.display = 'none';
+            
+            if(sectionName === 'dashboard' || sectionName === 'disciplinas') {
+                document.getElementById('disciplinas-section').style.display = 'block';
+            } else if (sectionName === 'tarefas') {
+                document.getElementById('tarefas-section').style.display = 'block';
+            }
+            document.querySelectorAll('.sidebar-list li').forEach(li => li.classList.remove('selected'));
+            event.target.classList.add('selected');
+        }
+
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+
+        // Visuais
+        function updateGreeting() {
+            const hours = new Date().getHours();
+            const greeting = hours < 12 ? 'Bom dia' : hours < 18 ? 'Boa tarde' : 'Boa noite';
+            document.getElementById('greeting-text').innerText = greeting;
+            const options = { weekday: 'long', day: 'numeric', month: 'short' };
+            document.getElementById('current-date').innerText = new Date().toLocaleDateString('pt-BR', options);
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icon = type === 'success' ? '<i class="ph-fill ph-check-circle"></i>' : '<i class="ph-fill ph-warning-circle"></i>';
+            toast.innerHTML = `${icon} <span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+
+        // Dados
+        async function loadDisciplinas() {
+            try {
+                const response = await fetch(`${API_URL}/disciplinas`);
+                const disciplinas = await response.json();
+                document.getElementById('total-disc').innerText = disciplinas.length;
+                renderDisciplinas(disciplinas);
+                updateSelects(disciplinas);
+            } catch (error) { console.error(error); }
+        }
+
+        document.getElementById('form-disciplina').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nome = document.getElementById('disc-nome').value;
+            const desc = document.getElementById('disc-desc').value;
+            try {
+                await fetch(`${API_URL}/disciplinas`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nome: nome, descricao: desc })
+                });
+                showToast("Disciplina criada!");
+                loadDisciplinas(); closeModal('modal-disciplina'); e.target.reset();
+            } catch { showToast("Erro ao salvar", "error"); }
+        });
+
+        function renderDisciplinas(lista) {
+            const grid = document.getElementById('disciplinas-grid');
+            grid.innerHTML = '';
+            if (lista.length === 0) {
+                grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1"><i class="ph ph-books empty-icon"></i><p>Nenhuma disciplina ainda.</p></div>`;
+                return;
+            }
+            lista.forEach(disc => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `<div style="margin-bottom:15px; font-size:24px; color:var(--accent)"><i class="ph ph-notebook"></i></div><h3>${disc.nome}</h3><p>${disc.descricao || ''}</p>`;
+                grid.appendChild(card);
+            });
+        }
+
+        async function loadTarefas() {
+            try {
+                const response = await fetch(`${API_URL}/tarefas`);
+                const tarefas = await response.json();
+                const pendentes = tarefas.filter(t => t.status !== 'Concluída').length;
+                const concluidas = tarefas.filter(t => t.status === 'Concluída').length;
+                document.getElementById('total-tasks').innerText = pendentes;
+                document.getElementById('total-done').innerText = concluidas;
+                renderTarefas(tarefas);
+            } catch (error) { console.error(error); }
+        }
+
+        function updateSelects(disciplinas) {
+            const select = document.getElementById('task-disc-select');
+            select.innerHTML = '';
+            disciplinas.forEach(disc => {
+                const option = document.createElement('option');
+                option.value = disc.id;
+                option.textContent = disc.nome;
+                select.appendChild(option);
+            });
+        }
+
+        document.getElementById('form-tarefa').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const novaTarefa = {
+                descricao: document.getElementById('task-desc').value,
+                disciplinaId: document.getElementById('task-disc-select').value,
+                prioridade: document.getElementById('task-prio').value,
+                prazo: document.getElementById('task-date').value
+            };
+            try {
+                await fetch(`${API_URL}/tarefas`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(novaTarefa)
+                });
+                showToast("Tarefa adicionada!");
+                loadTarefas(); closeModal('modal-tarefa'); e.target.reset();
+            } catch { showToast("Erro ao salvar", "error"); }
+        });
+
+        async function toggleStatus(id, statusAtual) {
+            const novo = statusAtual === 'Concluída' ? 'Pendente' : 'Concluída';
+            try {
+                await fetch(`${API_URL}/tarefas/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: novo })
+                });
+                loadTarefas();
+            } catch { showToast("Erro ao atualizar", "error"); }
+        }
+
+        async function deletarTarefa(id) {
+            if(!confirm("Apagar tarefa?")) return;
+            try {
+                await fetch(`${API_URL}/tarefas/${id}`, { method: 'DELETE' });
+                showToast("Tarefa removida");
+                loadTarefas();
+            } catch { showToast("Erro ao deletar", "error"); }
+        }
+
+        function renderTarefas(lista) {
+            const list = document.getElementById('tarefas-list');
+            list.innerHTML = '';
+            if (lista.length === 0) {
+                list.innerHTML = `<div class="empty-state"><i class="ph ph-check-circle empty-icon"></i><p>Tudo feito!</p></div>`;
+                return;
+            }
+            lista.forEach(task => {
+                const item = document.createElement('li');
+                item.className = 'meta-item';
+                item.style.display = "flex"; item.style.justifyContent = "space-between"; item.style.alignItems = "center";
+                
+                let dataFormatada = '';
+                if(task.prazo) {
+                    let d = new Date(task.prazo);
+                    if(Array.isArray(task.prazo)) d = new Date(task.prazo[0], task.prazo[1]-1, task.prazo[2]);
+                    dataFormatada = d.toLocaleDateString('pt-BR', {day:'2-digit', month:'2-digit'});
+                }
+
+                const isDone = task.status === 'Concluída';
+                const decoration = isDone ? 'text-decoration: line-through; opacity: 0.5;' : '';
+                const discNome = task.disciplina ? task.disciplina.nome : 'Geral';
+
+                item.innerHTML = `
+                    <div style="display:flex; align-items:center; ${decoration}; flex-grow: 1;">
+                        <input type="checkbox" ${isDone ? 'checked' : ''} 
+                               onchange="toggleStatus(${task.id}, '${task.status || 'Pendente'}')">
+                        <div style="margin-left: 10px;">
+                            <strong style="color:var(--text-primary); display:block; font-size: 15px;">${task.descricao}</strong>
+                            <small style="color:var(--text-secondary);"><i class="ph ph-tag" style="font-size:12px"></i> ${discNome} ${dataFormatada ? '• 📅 ' + dataFormatada : ''}</small>
+                        </div>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:15px;">
+                        <span class="meta-status status-${task.prioridade}">${task.prioridade}</span>
+                        <button onclick="deletarTarefa(${task.id})" class="btn-ghost" title="Excluir"><i class="ph ph-trash" style="font-size: 18px; color: var(--danger);"></i></button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+    </script>
+</body>
+</html>
